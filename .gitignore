@@ -1,5 +1,7 @@
 # Prerequisites
 *.d
+.vs/
+.vscode/
 
 # Compiled Object files
 *.slo
@@ -42,6 +44,8 @@
 # Build directories
 build/
 Build/
+out/
+Out/
 build-*/
 
 # CMake generated files
