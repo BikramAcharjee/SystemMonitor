@@ -1,4 +1,4 @@
-#include "NetworkTraffic.h"
+#include "system_monitor/collectors/network/NetworkTrafficCollector.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -101,11 +101,11 @@ namespace
 
 
 // ============================================================
-// NetworkTrafficMonitor::sample
+// NetworkTrafficMonitor::collect
 // ============================================================
 
 std::vector<NetworkTraffic>
-NetworkTrafficMonitor::sample()
+NetworkTrafficCollector::collect()
 {
     std::vector<NetworkTraffic> result;
 

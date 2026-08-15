@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 
 struct NetworkTraffic
 {
@@ -16,13 +15,4 @@ struct NetworkTraffic
 
     double downloadMBps = 0.0;
     double uploadMBps = 0.0;
-};
-
-
-class NetworkTrafficMonitor
-{
-public:
-
-    std::vector<NetworkTraffic>
-        sample();
 };

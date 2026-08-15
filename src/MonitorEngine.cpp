@@ -13,7 +13,7 @@
 
 
 MonitorEngine::MonitorEngine(WmiClient& wmi)
-    : wmi(wmi)
+    : wmi(wmi), cpuCollector(wmi)
 {
     collectStaticInformation();
 }
@@ -27,13 +27,13 @@ SystemSnapshot MonitorEngine::createSnapshot()
     snapshot.cpu = cpu;
     snapshot.cpuUsagePercent = cpuUsage.getUsage();
 
-    snapshot.memory = getMemoryInfo();
+    snapshot.memory = memoryCollector.collect();
 
-    snapshot.gpu = getGpuInfo();
+    snapshot.gpu = gpuCollector.collect();
 
-    snapshot.disks = getDiskInfo();
+    snapshot.disks = diskCollector.collect();
 
-    snapshot.network = networkTraffic.sample();
+    snapshot.network = networkTrafficCollector.collect();
 
     snapshot.motherboard = motherboard;
 
@@ -49,7 +49,7 @@ SystemSnapshot MonitorEngine::createSnapshot()
 
 void MonitorEngine::collectStaticInformation()
 {
-    cpu = getCpuInfo(wmi);
+    cpu = cpuCollector.collect();
 
     motherboard =
         getMotherboardInfo(wmi);

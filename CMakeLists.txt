@@ -13,19 +13,42 @@ find_package(httplib CONFIG REQUIRED)
 
 add_executable(SystemMonitor
     src/main.cpp
-    src/WmiClient.cpp
-    src/CpuInfo.cpp
-    src/MemoryInfo.cpp
-    src/MotherboardInfo.cpp
-    src/WindowsInfo.cpp
-    src/CpuUsage.cpp
-    src/DiskInfo.cpp
-    src/NetworkInfo.cpp
-    src/NetworkTraffic.cpp
+
+    # Core
     src/MonitorEngine.cpp
-    src/GpuInfo.cpp
     src/SystemSnapshotJson.cpp
+
+    # Platform - Windows
+    src/WmiClient.cpp
     src/TimeUtils.cpp
+
+    # Models
+    src/models/MemoryInfo.cpp
+    src/models/GpuInfo.cpp
+    src/models/DiskInfo.cpp
+
+    # Collectors - CPU
+    src/collectors/cpu/CpuCollector.cpp
+    src/CpuUsage.cpp
+
+    # Collectors - Memory
+    src/collectors/memory/MemoryCollector.cpp
+
+    # Collectors - Motherboard
+    src/MotherboardInfo.cpp
+
+    # Collectors - Windows
+    src/WindowsInfo.cpp
+
+    # Collectors - Disk
+    src/collectors/disk/DiskCollector.cpp
+
+    # Collectors - Network
+    src/collectors/network/NetworkAdapterCollector.cpp
+    src/collectors/network/NetworkTrafficCollector.cpp
+
+    # Collectors - GPU
+    src/collectors/gpu/GpuCollector.cpp
 )
 
 target_include_directories(SystemMonitor

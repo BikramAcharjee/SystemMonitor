@@ -1,16 +1,23 @@
 #pragma once
 
 #include "WmiClient.h"
-#include "CpuInfo.h"
-#include "MemoryInfo.h"
-#include "DiskInfo.h"
-#include "NetworkTraffic.h"
+
+#include "system_monitor/models/CpuInfo.h"
+#include "system_monitor/collectors/cpu/CpuCollector.h"
+
+#include "system_monitor/models/MemoryInfo.h"
+#include "system_monitor/collectors/memory/MemoryCollector.h"
+#include "system_monitor/models/DiskInfo.h"
+#include "system_monitor/collectors/disk/DiskCollector.h"
+#include "system_monitor/models/NetworkTraffic.h"
+#include "system_monitor/collectors/network/NetworkAdapterCollector.h"
+#include "system_monitor/collectors/network/NetworkTrafficCollector.h"
 #include "MotherboardInfo.h"
 #include "WindowsInfo.h"
 #include "CpuUsage.h"
-#include "GpuInfo.h"
+#include "system_monitor/models/GpuInfo.h"
+#include "system_monitor/collectors/gpu/GpuCollector.h"
 #include "SystemSnapshot.h"
-
 
 class MonitorEngine
 {
@@ -22,13 +29,20 @@ public:
 
     SystemSnapshot createSnapshot();
 
-
 private:
 
     WmiClient& wmi;
 
-    CpuInfo cpu;
+    // Collectors
+    CpuCollector cpuCollector;
+    MemoryCollector memoryCollector;
+    GpuCollector gpuCollector;
+    DiskCollector diskCollector;
 
+
+    // Collected data
+    CpuInfo cpu;
+    MemoryInfo memory;
     GpuInfo gpu;
 
     MotherboardInfo motherboard;
@@ -37,7 +51,8 @@ private:
 
     CpuUsage cpuUsage;
 
-    NetworkTrafficMonitor networkTraffic;
+    NetworkAdapterCollector networkAdapterCollector;
+    NetworkTrafficCollector networkTrafficCollector;
 
     bool running = true;
 

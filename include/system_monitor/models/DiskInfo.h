@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 
 struct DiskInfo
 {
@@ -17,5 +16,3 @@ struct DiskInfo
     double usedGB() const;
     double usagePercent() const;
 };
-
-std::vector<DiskInfo> getDiskInfo();

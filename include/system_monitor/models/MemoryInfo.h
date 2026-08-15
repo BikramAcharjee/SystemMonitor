@@ -13,5 +13,3 @@ struct MemoryInfo
     double usedGB() const;
     double availableGB() const;
 };
-
-MemoryInfo getMemoryInfo();

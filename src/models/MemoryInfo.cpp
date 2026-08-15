@@ -1,6 +1,4 @@
-#include "MemoryInfo.h"
-
-#include <windows.h>
+#include "system_monitor/models/MemoryInfo.h"
 
 namespace
 {
@@ -37,30 +35,4 @@ double MemoryInfo::availableGB() const
 {
     return static_cast<double>(availableBytes)
         / BYTES_PER_GB;
-}
-
-MemoryInfo getMemoryInfo()
-{
-    MemoryInfo memory;
-
-    MEMORYSTATUSEX status{};
-
-    status.dwLength = sizeof(status);
-
-    if (!GlobalMemoryStatusEx(&status))
-    {
-        return memory;
-    }
-
-    memory.totalBytes =
-        status.ullTotalPhys;
-
-    memory.availableBytes =
-        status.ullAvailPhys;
-
-    memory.usedBytes =
-        memory.totalBytes -
-        memory.availableBytes;
-
-    return memory;
 }

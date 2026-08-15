@@ -1,4 +1,4 @@
-#include "NetworkInfo.h"
+#include "system_monitor/collectors/network/NetworkAdapterCollector.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -98,7 +98,7 @@ namespace
 
 
 std::vector<NetworkAdapterInfo>
-getNetworkAdapters()
+NetworkAdapterCollector::collect()
 {
     std::vector<NetworkAdapterInfo> adapters;
 

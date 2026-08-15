@@ -3,13 +3,13 @@
 #include <string>
 #include <vector>
 
-#include "CpuInfo.h"
-#include "MemoryInfo.h"
-#include "DiskInfo.h"
-#include "NetworkTraffic.h"
+#include "system_monitor/models/CpuInfo.h"
+#include "system_monitor/models/MemoryInfo.h"
+#include "system_monitor/models/DiskInfo.h"
+#include "system_monitor/models/NetworkTraffic.h"
 #include "MotherboardInfo.h"
 #include "WindowsInfo.h"
-#include "GpuInfo.h"
+#include "system_monitor/models/GpuInfo.h"
 
 struct SystemSnapshot
 {

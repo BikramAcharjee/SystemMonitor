@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 
 struct NetworkAdapterInfo
 {
@@ -20,5 +19,3 @@ struct NetworkAdapterInfo
     double downloadMbps = 0.0;
     double uploadMbps = 0.0;
 };
-
-std::vector<NetworkAdapterInfo> getNetworkAdapters();
