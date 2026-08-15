@@ -1,6 +1,7 @@
 #define NOMINMAX
 
 #include "MonitorEngine.h"
+#include "TimeUtils.h"
 
 #include <iostream>
 #include <iomanip>
@@ -14,6 +15,31 @@
 MonitorEngine::MonitorEngine(WmiClient& wmi)
     : wmi(wmi)
 {
+    collectStaticInformation();
+}
+
+SystemSnapshot MonitorEngine::createSnapshot()
+{
+    SystemSnapshot snapshot;
+
+    snapshot.timestamp = getCurrentTimestamp();
+
+    snapshot.cpu = cpu;
+    snapshot.cpuUsagePercent = cpuUsage.getUsage();
+
+    snapshot.memory = getMemoryInfo();
+
+    snapshot.gpu = getGpuInfo();
+
+    snapshot.disks = getDiskInfo();
+
+    snapshot.network = networkTraffic.sample();
+
+    snapshot.motherboard = motherboard;
+
+    snapshot.windows = windows;
+
+    return snapshot;
 }
 
 
@@ -37,7 +63,7 @@ void MonitorEngine::collectStaticInformation()
 // Display current monitoring information
 // ============================================================
 
-void MonitorEngine::display()
+void MonitorEngine::display(const SystemSnapshot& snapshot)
 {
     // --------------------------------------------------------
     // Clear console
@@ -60,8 +86,7 @@ void MonitorEngine::display()
     // CPU
     // --------------------------------------------------------
 
-    double cpuUsageValue =
-        cpuUsage.getUsage();
+    double cpuUsageValue = snapshot.cpuUsagePercent;
 
 
     std::cout
@@ -69,7 +94,7 @@ void MonitorEngine::display()
 
     std::cout
         << "Name              : "
-        << cpu.name
+        << snapshot.cpu.name
         << '\n';
 
     std::cout
@@ -81,21 +106,18 @@ void MonitorEngine::display()
 
     std::cout
         << "Physical Cores    : "
-        << cpu.physicalCores
+        << snapshot.cpu.physicalCores
         << '\n';
 
     std::cout
         << "Logical Processors: "
-        << cpu.logicalProcessors
+        << snapshot.cpu.logicalProcessors
         << '\n';
 
 
     // --------------------------------------------------------
     // Memory
     // --------------------------------------------------------
-
-    MemoryInfo memory =
-        getMemoryInfo();
 
 
     std::cout
@@ -104,36 +126,34 @@ void MonitorEngine::display()
     std::cout
         << "Total RAM         : "
         << std::setprecision(2)
-        << memory.totalGB()
+        << snapshot.memory.totalGB()
         << " GB\n";
 
     std::cout
         << "Used RAM          : "
-        << memory.usedGB()
+        << snapshot.memory.usedGB()
         << " GB\n";
 
     std::cout
         << "Available RAM     : "
-        << memory.availableGB()
+        << snapshot.memory.availableGB()
         << " GB\n";
 
     std::cout
         << "RAM Usage         : "
-        << memory.usagePercent()
+        << snapshot.memory.usagePercent()
         << " %\n";
 
     // --------------------------------------------------------
     // GPU
     // --------------------------------------------------------
 
-    gpu = getGpuInfo();
-
 
     std::cout
         << "\n========== GPU ==========\n";
 
 
-    if (!gpu.available)
+    if (!snapshot.gpu.available)
     {
         std::cout
             << "NVIDIA GPU monitoring unavailable.\n";
@@ -142,44 +162,44 @@ void MonitorEngine::display()
     {
         std::cout
             << "GPU               : "
-            << gpu.name
+            << snapshot.gpu.name
             << '\n';
 
         std::cout
             << "Usage             : "
-            << gpu.utilizationPercent
+            << snapshot.gpu.utilizationPercent
             << " %\n";
 
         std::cout
             << "Temperature       : "
-            << gpu.temperature
+            << snapshot.gpu.temperature
             << " C\n";
 
         std::cout
             << "VRAM Total        : "
             << std::fixed
             << std::setprecision(2)
-            << gpu.memoryTotalGB()
+            << snapshot.gpu.memoryTotalGB()
             << " GB\n";
 
         std::cout
             << "VRAM Used         : "
-            << gpu.memoryUsedGB()
+            << snapshot.gpu.memoryUsedGB()
             << " GB\n";
 
         std::cout
             << "VRAM Free         : "
-            << gpu.memoryFreeGB()
+            << snapshot.gpu.memoryFreeGB()
             << " GB\n";
 
         std::cout
             << "Core Clock        : "
-            << gpu.coreClockMHz
+            << snapshot.gpu.coreClockMHz
             << " MHz\n";
 
         std::cout
             << "Memory Clock      : "
-            << gpu.memoryClockMHz
+            << snapshot.gpu.memoryClockMHz
             << " MHz\n";
     }
 
@@ -188,15 +208,12 @@ void MonitorEngine::display()
     // Storage
     // --------------------------------------------------------
 
-    std::vector<DiskInfo> disks =
-        getDiskInfo();
-
 
     std::cout
         << "\n========== STORAGE ==========\n";
 
 
-    for (const auto& disk : disks)
+    for (const auto& disk : snapshot.disks)
     {
         std::cout
             << disk.drive
@@ -217,23 +234,19 @@ void MonitorEngine::display()
     // Network
     // --------------------------------------------------------
 
-    std::vector<NetworkTraffic>
-        network =
-        networkTraffic.sample();
-
 
     std::cout
         << "\n========== NETWORK ==========\n";
 
 
-    if (network.empty())
+    if (snapshot.network.empty())
     {
         std::cout
             << "No active physical network adapter.\n";
     }
     else
     {
-        for (const auto& adapter : network)
+        for (const auto& adapter : snapshot.network)
         {
             std::cout
                 << adapter.adapterName
@@ -262,12 +275,17 @@ void MonitorEngine::display()
 
     std::cout
         << "Manufacturer      : "
-        << motherboard.manufacturer
+        << snapshot.motherboard.manufacturer
         << '\n';
 
     std::cout
         << "Model             : "
-        << motherboard.model
+        << snapshot.motherboard.model
+        << '\n';
+
+    std::cout
+        << "Serial Number     : "
+        << snapshot.motherboard.serialNumber
         << '\n';
 
 
@@ -280,22 +298,22 @@ void MonitorEngine::display()
 
     std::cout
         << "Name              : "
-        << windows.name
+        << snapshot.windows.name
         << '\n';
 
     std::cout
         << "Version           : "
-        << windows.version
+        << snapshot.windows.version
         << '\n';
 
     std::cout
         << "Build             : "
-        << windows.buildNumber
+        << snapshot.windows.buildNumber
         << '\n';
 
     std::cout
         << "Architecture      : "
-        << windows.architecture
+        << snapshot.windows.architecture
         << '\n';
 
 
@@ -320,8 +338,6 @@ void MonitorEngine::display()
 
 void MonitorEngine::run()
 {
-    collectStaticInformation();
-
 
     // Prime CPU usage measurement
     cpuUsage.getUsage();
@@ -337,11 +353,9 @@ void MonitorEngine::run()
             std::chrono::seconds(1)
         );
 
+        SystemSnapshot snapshot =
+            createSnapshot();
 
-        // ----------------------------------------------------
-        // Display latest information
-        // ----------------------------------------------------
-
-        display();
+        display(snapshot);
     }
 }

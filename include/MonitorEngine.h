@@ -9,6 +9,7 @@
 #include "WindowsInfo.h"
 #include "CpuUsage.h"
 #include "GpuInfo.h"
+#include "SystemSnapshot.h"
 
 
 class MonitorEngine
@@ -19,20 +20,14 @@ public:
 
     void run();
 
+    SystemSnapshot createSnapshot();
+
 
 private:
 
     WmiClient& wmi;
 
-    // --------------------------------------------------------
-    // Static information
-    // --------------------------------------------------------
-
     CpuInfo cpu;
-
-    // --------------------------------------------------------
-    // GPU
-    // --------------------------------------------------------
 
     GpuInfo gpu;
 
@@ -40,27 +35,13 @@ private:
 
     WindowsInfo windows;
 
-
-    // --------------------------------------------------------
-    // Dynamic monitoring
-    // --------------------------------------------------------
-
     CpuUsage cpuUsage;
 
     NetworkTrafficMonitor networkTraffic;
 
-    // --------------------------------------------------------
-    // Control
-    // --------------------------------------------------------
-
     bool running = true;
-
-
-    // --------------------------------------------------------
-    // Internal functions
-    // --------------------------------------------------------
 
     void collectStaticInformation();
 
-    void display();
+    void display(const SystemSnapshot& snapshot);
 };
