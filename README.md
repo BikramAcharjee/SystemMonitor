@@ -124,13 +124,13 @@ You can build and run the application manually from the command line using stand
    ```
 3. **Configure the Build Directory:**
    ```powershell
-   cmake -B build -S .
+   cmake -S . -B build -G "Visual Studio 18 2026" -A x64
    ```
 4. **Build the Target:**
    ```powershell
-   cmake --build build --config Debug
+   cmake --build build --config Release
    ```
 5. **Run the Executable:**
    ```powershell
-   .\build\Debug\SystemMonitor.exe
+   .\build\Release\SystemMonitor.exe
    ```
