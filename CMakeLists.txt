@@ -14,9 +14,21 @@ add_executable(SystemMonitor
     src/MemoryInfo.cpp
     src/MotherboardInfo.cpp
     src/WindowsInfo.cpp
+    src/CpuUsage.cpp
+    src/DiskInfo.cpp
+    src/NetworkInfo.cpp
+    src/NetworkTraffic.cpp
+    src/MonitorEngine.cpp
+    src/GpuInfo.cpp
 )
 
 target_include_directories(SystemMonitor
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(SystemMonitor PRIVATE
+
+    wbemuuid
+    iphlpapi
 )
