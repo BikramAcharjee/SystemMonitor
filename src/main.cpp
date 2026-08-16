@@ -2,9 +2,9 @@
 #include <nlohmann/json.hpp>
 #include <httplib.h>
 
-#include "WmiClient.h"
-#include "MonitorEngine.h"
-#include "SystemSnapshotJson.h"
+#include "system_monitor/WmiClient.h"
+#include "system_monitor/MonitorEngine.h"
+#include "system_monitor/SystemSnapshotJson.h"
 #include "system_monitor/api/ApiResponse.h"
 
 

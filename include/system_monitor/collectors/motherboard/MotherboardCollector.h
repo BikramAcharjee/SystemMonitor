@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WmiClient.h"
+#include "system_monitor/WmiClient.h"
 #include "system_monitor/models/MotherboardInfo.h"
 
 class MotherboardCollector

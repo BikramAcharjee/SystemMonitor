@@ -1,11 +1,11 @@
 #define NOMINMAX
 
-#include "MonitorEngine.h"
+#include "system_monitor/MonitorEngine.h"
 #include "system_monitor/utils/TimeUtils.h"
 
 
 MonitorEngine::MonitorEngine(WmiClient& wmi)
-    : wmi(wmi), cpuCollector(wmi), motherboardCollector(wmi), windowsCollector(wmi)
+    : cpuCollector(wmi), motherboardCollector(wmi), windowsCollector(wmi)
 {
     collectStaticInformation();
 }

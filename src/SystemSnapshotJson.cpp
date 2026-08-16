@@ -1,4 +1,4 @@
-#include "SystemSnapshotJson.h"
+#include "system_monitor/SystemSnapshotJson.h"
 
 nlohmann::json toJson(const SystemSnapshot& snapshot)
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SystemSnapshot.h"
+#include "system_monitor/SystemSnapshot.h"
 
 #include <nlohmann/json.hpp>
 

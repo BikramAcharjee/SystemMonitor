@@ -1,6 +1,6 @@
 #include "system_monitor/collectors/cpu/CpuCollector.h"
 
-#include "WmiClient.h"
+#include "system_monitor/WmiClient.h"
 
 CpuCollector::CpuCollector(WmiClient& wmi)
     : wmi(wmi)
