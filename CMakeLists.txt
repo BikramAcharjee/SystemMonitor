@@ -49,6 +49,10 @@ add_executable(SystemMonitor
 
     # Collectors - GPU
     src/collectors/gpu/GpuCollector.cpp
+
+    # Telemetry
+    src/telemetry/TelemetryEncoder.cpp
+    src/telemetry/TelemetryDecoder.cpp
 )
 
 target_include_directories(SystemMonitor

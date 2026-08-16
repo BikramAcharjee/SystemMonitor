@@ -6,10 +6,52 @@
 #include "system_monitor/MonitorEngine.h"
 #include "system_monitor/SystemSnapshotJson.h"
 #include "system_monitor/api/ApiResponse.h"
+#include "system_monitor/telemetry/TelemetryEncoder.h"
+#include "system_monitor/telemetry/TelemetryDecoder.h"
 
 
 int main()
 {
+
+    TelemetryPacket packet;
+
+    packet.packetId = 1;
+    packet.timestamp = 123456789;
+    packet.cpuUsage = 23.5f;
+    packet.memoryUsage = 61.2f;
+
+    const auto encoded = TelemetryEncoder::encode(packet);
+    const auto decoded = TelemetryDecoder::decode(encoded);
+
+    std::cout << "\nDECODED TELEMETRY\n";
+
+    std::cout << "Packet ID    : "
+        << decoded.packetId << '\n';
+
+    std::cout << "Timestamp    : "
+        << decoded.timestamp << '\n';
+
+    std::cout << "CPU Usage    : "
+        << decoded.cpuUsage << "%\n";
+
+    std::cout << "Memory Usage : "
+        << decoded.memoryUsage << "%\n";
+
+    std::cout << "\nTELEMETRY PACKET\n";
+    std::cout << "Size: " << encoded.size() << " bytes\n";
+
+    std::cout << "Bytes: ";
+
+    for (const auto byte : encoded)
+    {
+        std::cout
+            << std::hex
+            << static_cast<int>(byte)
+            << ' ';
+    }
+
+    std::cout << std::dec << '\n';
+
     std::cout
         << "========================================\n"
         << "       C++ SYSTEM MONITOR API\n"
