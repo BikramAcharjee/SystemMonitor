@@ -1,7 +1,6 @@
 #pragma once
-#include <string>
 
-class WmiClient;
+#include <string>
 
 struct WindowsInfo
 {
@@ -10,5 +9,3 @@ struct WindowsInfo
     std::string buildNumber;
     std::string architecture;
 };
-
-WindowsInfo getWindowsInfo(WmiClient& wmi);

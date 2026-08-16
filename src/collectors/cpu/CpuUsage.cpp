@@ -1,4 +1,4 @@
-#include "CpuUsage.h"
+#include "system_monitor/collectors/cpu/CpuUsage.h"
 
 #include <windows.h>
 

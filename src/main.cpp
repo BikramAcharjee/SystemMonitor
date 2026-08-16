@@ -5,6 +5,7 @@
 #include "WmiClient.h"
 #include "MonitorEngine.h"
 #include "SystemSnapshotJson.h"
+#include "system_monitor/api/ApiResponse.h"
 
 
 int main()
@@ -60,24 +61,111 @@ int main()
                 nlohmann::json json =
                     toJson(snapshot);
 
-                res.set_content(
-                    json.dump(4),
-                    "application/json"
-                );
+                ApiResponse::json(res, json);
             }
             catch (const std::exception& ex)
             {
-                nlohmann::json error =
-                {
-                    {"error", ex.what()}
-                };
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
 
-                res.status = 500;
+    server.Get("/api/system/cpu",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
 
-                res.set_content(
-                    error.dump(4),
-                    "application/json"
-                );
+                nlohmann::json json =
+                    cpuToJson(snapshot);
+
+                ApiResponse::json(res,json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res,500,ex.what());
+            }
+        });
+
+    server.Get("/api/system/memory",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    memoryToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
+
+    server.Get("/api/system/gpu",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    gpuToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
+
+    server.Get("/api/system/storage",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    disksToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
+
+    server.Get("/api/system/network",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    networkToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
             }
         });
 
@@ -115,6 +203,21 @@ int main()
 
     std::cout
         << "System : http://localhost:8080/api/system\n";
+
+    std::cout
+        << "CPU    : http://localhost:8080/api/system/cpu\n";
+
+    std::cout
+        << "Memory : http://localhost:8080/api/system/memory\n";
+
+    std::cout
+        << "GPU    : http://localhost:8080/api/system/gpu\n";
+
+    std::cout
+        << "Storage: http://localhost:8080/api/system/storage\n";
+
+    std::cout
+        << "Network: http://localhost:8080/api/system/network\n";
 
     std::cout
         << "\nPress Ctrl+C to stop.\n";

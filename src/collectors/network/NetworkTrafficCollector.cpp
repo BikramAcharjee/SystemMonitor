@@ -30,16 +30,11 @@ namespace
         std::chrono::steady_clock::time_point timestamp;
     };
 
-
     std::unordered_map<
         NET_IFINDEX,
         PreviousCounters
     > previousCounters;
 
-
-    // --------------------------------------------------------
-    // Windows WCHAR -> UTF-8 std::string
-    // --------------------------------------------------------
 
     std::string wideToString(
         const WCHAR* value)
@@ -49,7 +44,6 @@ namespace
         {
             return "";
         }
-
 
         int requiredSize =
             WideCharToMultiByte(
@@ -63,18 +57,15 @@ namespace
                 nullptr
             );
 
-
         if (requiredSize <= 0)
         {
             return "";
         }
 
-
         std::string result(
             requiredSize,
             '\0'
         );
-
 
         WideCharToMultiByte(
             CP_UTF8,
@@ -87,13 +78,11 @@ namespace
             nullptr
         );
 
-
         if (!result.empty() &&
             result.back() == '\0')
         {
             result.pop_back();
         }
-
 
         return result;
     }

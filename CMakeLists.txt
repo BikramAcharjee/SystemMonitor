@@ -20,7 +20,7 @@ add_executable(SystemMonitor
 
     # Platform - Windows
     src/WmiClient.cpp
-    src/TimeUtils.cpp
+    src/utils/TimeUtils.cpp
 
     # Models
     src/models/MemoryInfo.cpp
@@ -29,16 +29,16 @@ add_executable(SystemMonitor
 
     # Collectors - CPU
     src/collectors/cpu/CpuCollector.cpp
-    src/CpuUsage.cpp
+    src/collectors/cpu/CpuUsage.cpp
 
     # Collectors - Memory
     src/collectors/memory/MemoryCollector.cpp
 
     # Collectors - Motherboard
-    src/MotherboardInfo.cpp
+    src/collectors/motherboard/MotherboardCollector.cpp
 
     # Collectors - Windows
-    src/WindowsInfo.cpp
+    src/collectors/windows/WindowsCollector.cpp
 
     # Collectors - Disk
     src/collectors/disk/DiskCollector.cpp

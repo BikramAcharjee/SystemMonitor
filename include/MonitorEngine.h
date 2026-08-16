@@ -12,9 +12,11 @@
 #include "system_monitor/models/NetworkTraffic.h"
 #include "system_monitor/collectors/network/NetworkAdapterCollector.h"
 #include "system_monitor/collectors/network/NetworkTrafficCollector.h"
-#include "MotherboardInfo.h"
-#include "WindowsInfo.h"
-#include "CpuUsage.h"
+#include "system_monitor/collectors/motherboard/MotherboardCollector.h"
+#include "system_monitor/collectors/windows/WindowsCollector.h"
+#include "system_monitor/collectors/cpu/CpuUsage.h"
+#include "system_monitor/models/MotherboardInfo.h"
+#include "system_monitor/models/WindowsInfo.h"
 #include "system_monitor/models/GpuInfo.h"
 #include "system_monitor/collectors/gpu/GpuCollector.h"
 #include "SystemSnapshot.h"
@@ -24,8 +26,6 @@ class MonitorEngine
 public:
 
     explicit MonitorEngine(WmiClient& wmi);
-
-    void run();
 
     SystemSnapshot createSnapshot();
 
@@ -38,6 +38,8 @@ private:
     MemoryCollector memoryCollector;
     GpuCollector gpuCollector;
     DiskCollector diskCollector;
+    MotherboardCollector motherboardCollector;
+    WindowsCollector windowsCollector;
 
 
     // Collected data
@@ -54,9 +56,5 @@ private:
     NetworkAdapterCollector networkAdapterCollector;
     NetworkTrafficCollector networkTrafficCollector;
 
-    bool running = true;
-
     void collectStaticInformation();
-
-    void display(const SystemSnapshot& snapshot);
 };

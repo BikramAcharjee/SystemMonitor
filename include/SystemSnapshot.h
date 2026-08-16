@@ -7,8 +7,8 @@
 #include "system_monitor/models/MemoryInfo.h"
 #include "system_monitor/models/DiskInfo.h"
 #include "system_monitor/models/NetworkTraffic.h"
-#include "MotherboardInfo.h"
-#include "WindowsInfo.h"
+#include "system_monitor/models/MotherboardInfo.h"
+#include "system_monitor/models/WindowsInfo.h"
 #include "system_monitor/models/GpuInfo.h"
 
 struct SystemSnapshot
