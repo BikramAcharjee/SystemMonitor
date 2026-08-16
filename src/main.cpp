@@ -1,16 +1,19 @@
 #include <iostream>
+#include <nlohmann/json.hpp>
+#include <httplib.h>
 
-#include "WmiClient.h"
-#include "CpuInfo.h"
-#include "MemoryInfo.h"
-#include "MotherboardInfo.h"
-#include "WindowsInfo.h"
+#include "system_monitor/WmiClient.h"
+#include "system_monitor/MonitorEngine.h"
+#include "system_monitor/SystemSnapshotJson.h"
+#include "system_monitor/api/ApiResponse.h"
+
 
 int main()
 {
-    std::cout << "========================================\n";
-    std::cout << "       C++ SYSTEM MONITOR - PHASE 1     \n";
-    std::cout << "========================================\n";
+    std::cout
+        << "========================================\n"
+        << "       C++ SYSTEM MONITOR API\n"
+        << "========================================\n";
 
 
     // --------------------------------------------------------
@@ -21,116 +24,210 @@ int main()
 
     if (!wmi.initialize())
     {
-        std::cerr << "\nFailed to initialize WMI.\n";
+        std::cerr
+            << "Failed to initialize WMI.\n";
+
         return 1;
     }
 
 
     // --------------------------------------------------------
-    // Collect information
+    // Initialize monitoring engine
     // --------------------------------------------------------
 
-    CpuInfo cpu = getCpuInfo(wmi);
-
-    MemoryInfo memory = getMemoryInfo();
-
-    MotherboardInfo motherboard =
-        getMotherboardInfo(wmi);
-
-    WindowsInfo windows =
-        getWindowsInfo(wmi);
+    MonitorEngine monitor(wmi);
 
 
     // --------------------------------------------------------
-    // Display CPU
+    // Create HTTP server
     // --------------------------------------------------------
 
-    std::cout << "\n========== CPU ==========\n";
-
-    std::cout
-        << "Name              : "
-        << cpu.name
-        << '\n';
-
-    std::cout
-        << "Manufacturer      : "
-        << cpu.manufacturer
-        << '\n';
-
-    std::cout
-        << "Physical Cores    : "
-        << cpu.physicalCores
-        << '\n';
-
-    std::cout
-        << "Logical Processors: "
-        << cpu.logicalProcessors
-        << '\n';
+    httplib::Server server;
 
 
     // --------------------------------------------------------
-    // Display memory
+    // System information endpoint
     // --------------------------------------------------------
 
-    std::cout << "\n========== MEMORY ===========\n";
+    server.Get("/api/system",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
 
-    std::cout
-        << "Total RAM         : "
-        << memory.totalGB()
-        << " GB\n";
+                nlohmann::json json =
+                    toJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
+
+    server.Get("/api/system/cpu",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    cpuToJson(snapshot);
+
+                ApiResponse::json(res,json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res,500,ex.what());
+            }
+        });
+
+    server.Get("/api/system/memory",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    memoryToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
+
+    server.Get("/api/system/gpu",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    gpuToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
+
+    server.Get("/api/system/storage",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    disksToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
+
+    server.Get("/api/system/network",
+        [&monitor](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            try
+            {
+                SystemSnapshot snapshot =
+                    monitor.createSnapshot();
+
+                nlohmann::json json =
+                    networkToJson(snapshot);
+
+                ApiResponse::json(res, json);
+            }
+            catch (const std::exception& ex)
+            {
+                ApiResponse::error(res, 500, ex.what());
+            }
+        });
 
 
     // --------------------------------------------------------
-    // Display motherboard
+    // Health check
     // --------------------------------------------------------
 
-    std::cout << "\n========== MOTHERBOARD ==========\n";
+    server.Get("/api/health",
+        [](const httplib::Request& req,
+            httplib::Response& res)
+        {
+            nlohmann::json response =
+            {
+                {"status", "UP"},
+                {"service", "SystemMonitor"}
+            };
 
-    std::cout
-        << "Manufacturer      : "
-        << motherboard.manufacturer
-        << '\n';
-
-    std::cout
-        << "Model             : "
-        << motherboard.model
-        << '\n';
-
-    std::cout
-        << "Serial Number     : "
-        << motherboard.serialNumber
-        << '\n';
+            res.set_content(
+                response.dump(4),
+                "application/json"
+            );
+        });
 
 
     // --------------------------------------------------------
-    // Display Windows
+    // Start server
     // --------------------------------------------------------
 
-    std::cout << "\n========== WINDOWS ==========\n";
+    std::cout
+        << "\nSystem Monitor API started.\n";
 
     std::cout
-        << "Name              : "
-        << windows.name
-        << '\n';
+        << "Health : http://localhost:8080/api/health\n";
 
     std::cout
-        << "Version           : "
-        << windows.version
-        << '\n';
+        << "System : http://localhost:8080/api/system\n";
 
     std::cout
-        << "Build             : "
-        << windows.buildNumber
-        << '\n';
+        << "CPU    : http://localhost:8080/api/system/cpu\n";
 
     std::cout
-        << "Architecture      : "
-        << windows.architecture
-        << '\n';
+        << "Memory : http://localhost:8080/api/system/memory\n";
+
+    std::cout
+        << "GPU    : http://localhost:8080/api/system/gpu\n";
+
+    std::cout
+        << "Storage: http://localhost:8080/api/system/storage\n";
+
+    std::cout
+        << "Network: http://localhost:8080/api/system/network\n";
+
+    std::cout
+        << "\nPress Ctrl+C to stop.\n";
 
 
-    std::cout << "\n========================================\n";
-    std::cout << "System information collected successfully.\n";
+    server.listen(
+        "0.0.0.0",
+        8080
+    );
+
 
     return 0;
 }

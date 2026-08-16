@@ -1,7 +1,13 @@
-#include "CpuInfo.h"
-#include "WmiClient.h"
+#include "system_monitor/collectors/cpu/CpuCollector.h"
 
-CpuInfo getCpuInfo(WmiClient& wmi)
+#include "system_monitor/WmiClient.h"
+
+CpuCollector::CpuCollector(WmiClient& wmi)
+    : wmi(wmi)
+{
+}
+
+CpuInfo CpuCollector::collect()
 {
     CpuInfo cpu;
 
